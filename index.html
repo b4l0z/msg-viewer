@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discord Message Viewer</title>
+    <style>
+        body { 
+            margin: 0; padding: 0; 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: #1e1e1e; color: #f5f5f5; 
+            display: flex; flex-direction: column; align-items: center;
+            height: 100vh; overflow: hidden; 
+        }
+        #messages { 
+            list-style-type: none; margin: 0; padding: 1rem; 
+            overflow-y: auto; flex-grow: 1; width: 100%; max-width: 600px; 
+            scrollbar-width: thin;
+            scrollbar-color: #555 #1e1e1e;
+        }
+
+        #messages::-webkit-scrollbar {
+            width: 8px;
+        }
+        #messages::-webkit-scrollbar-track {
+            background: #1e1e1e;
+        }
+        #messages::-webkit-scrollbar-thumb {
+            background: #555;
+            border-radius: 10px; 
+        }
+        #messages::-webkit-scrollbar-thumb:hover {
+            background: #777;
+        }
+
+        #messages li { 
+            padding: 0.75rem 1rem; border-radius: 8px; 
+            margin-bottom: 0.5rem; background-color: #333;
+            display: flex; flex-direction: column; color: #f5f5f5;
+        }
+        .discord-message .author { font-weight: bold; color: #7289da; }
+        .discord-message .channel { color: #b9bbbe; font-size: 0.85rem; margin-top: 0.2rem; }
+        .discord-message .content { margin-top: 0.5rem; }
+
+        .discord-message img { 
+            margin-top: 0.5rem; width: auto; height: auto;
+            max-width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6), 0 0 0 4px rgba(255, 255, 255, 0.1); 
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <ul id="messages"></ul>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        var socket = io();
+        var messages = document.getElementById('messages');
+
+        socket.on('dscmsg', function(msg, author, channel, imageUrl) {
+            var item = document.createElement('li');
+            item.className = 'discord-message';
+
+            var authorElement = document.createElement('div');
+            authorElement.className = 'author';
+            authorElement.textContent = `@${author}`;
+
+            var channelElement = document.createElement('div');
+            channelElement.className = 'channel';
+            channelElement.textContent = `#${channel}`;
+
+            var contentElement = document.createElement('div');
+            contentElement.className = 'content';
+            contentElement.textContent = msg;
+
+            item.appendChild(authorElement);
+            item.appendChild(channelElement);
+            item.appendChild(contentElement);
+
+            if (imageUrl) {
+                var imageElement = document.createElement('img');
+                imageElement.src = imageUrl;
+                imageElement.alt = "Image ou GIF envoyé sur Discord";
+                item.appendChild(imageElement);
+            }
+
+            messages.appendChild(item);
+            messages.scrollTop = messages.scrollHeight;
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+{
+    "name": "message-viewer",
+    "version": "0.0.1",
+    "dependencies": {
+        "discord.js": "^14.16.3",
+        "express": "^4.21.1",
+        "socket.io": "^4.8.1"
+    }
+}
